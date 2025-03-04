@@ -210,6 +210,6 @@ class PQBinaryHeap:
         for i in range(pq.length()):
             key, value = pq.remove_min()
             print('removed min (', key, value, '):', pq)
-
-PQBinaryHeap._testadd()
-PQBinaryHeap._test()
+if __name__ == "__main__":
+    PQBinaryHeap._testadd()
+    PQBinaryHeap._test()
