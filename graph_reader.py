@@ -1,5 +1,6 @@
 from pq.apq_unsorted_list import APQUnsortedList
 from graph.graph_dijkstra import Graph
+from dijkstra_algos.dijkstra import *
 
 
 def graphreader(filename):
@@ -37,6 +38,7 @@ def graphreader(filename):
 
         print(f"GraphReader - Read {num_edges} edges and added into the graph")
 
+    print(graph)
     return graph
 
 
@@ -51,14 +53,29 @@ def print_shortest_path(start, end, parent_map):
     path.reverse()  # Reverse to get the correct order
     print(f"Path from {start} to {end}: {' -> '.join(str(v) for v in path)}")
 
+
 if __name__ == "__main__":
     # Read Graph from File
     graph = graphreader("simplegraph2-2.txt")
-    print(graph)
-    print("Highest degree Vertex")
-    print(graph.highestdegreevertex())
-    print('Shorted path from 14 to 5')
-    source = graph.get_vertex_by_label(14)
-    dest = graph.get_vertex_by_label(5)
 
+    # Define Start and End Vertices
+    start_vertex = graph.get_vertex_by_label(14)
+    end_vertex = graph.get_vertex_by_label(5)
 
+    # Run Dijkstra’s Algorithm
+    #result = graph.dijkstra(start_vertex, end_vertex, PriorityQueue)
+    results = dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQUnsortedList)
+    # Extract distances and parents from result
+    distances = {v: results[v][0] for v in results}
+    parents = {v: results[v][1] for v in results}
+
+    # Print Distances
+    print("\nShortest distances from start vertex:")
+    for vertex, distance in distances.items():
+        print(f"Distance to {vertex}: {distance}")
+
+    # Print Shortest Paths
+    print("\nShortest paths:")
+    for vertex in distances:
+        if vertex != start_vertex:
+            print_shortest_path(start_vertex, vertex, parents)
