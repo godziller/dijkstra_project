@@ -1,4 +1,4 @@
-from pq.apq_unsorted_list import APQUnsortedList
+from pq import APQUnsortedList
 from graph.graph_dijkstra import Graph
 from dijkstra_algos.dijkstra import *
 
