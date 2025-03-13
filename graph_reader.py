@@ -81,3 +81,9 @@ if __name__ == "__main__":
     for vertex in distances:
         if vertex != start_vertex:
             print_shortest_path(start_vertex, vertex, predecessors)
+
+    # Now this is where I test if I work.... 14->5 = length 8 and predecessor 8
+    print("Success here is 14 -> 5 = length 16 and predecessor 8")
+    target_distance = distances.get(end_vertex, 'Not reachable')
+    print(f"Distance to {end_vertex} is {target_distance}")
+    print(f"And {end_vertex}'s predecessor is {predecessors[end_vertex]}")
