@@ -1,6 +1,6 @@
-from pq.apq_unsorted_list import APQUnsortedList
+from pq import APQUnsortedList
 
-def dijkstra_source_to_dest(graph, start, end,  apq_class):
+def dijkstra_source_to_dest(graph, start, end,  apq_class, break_if_end_found=False):
     """
     Computes the shortest path from a given source vertex to a specified destination vertex
     using Dijkstra's algorithm with an Adaptable Priority Queue.
@@ -10,6 +10,7 @@ def dijkstra_source_to_dest(graph, start, end,  apq_class):
         start -- The starting vertex for the shortest path calculation.
         end -- The destination vertex where the shortest path terminates.
         apq_class -- taking advantage that both APQ implemenations share same APIs
+        break_if_end_found -- this allows the algo to exit early if the target is found
 
     Returns:
         A closed dictionary containing
@@ -50,7 +51,8 @@ def dijkstra_source_to_dest(graph, start, end,  apq_class):
         closed[current] = (distances[current], predecessors[current])
 
         # You have arrived, disembark the dijkstra train
-        if current == end:
+        # This break_if_end_found allows us to exit quicker..
+        if break_if_end_found and current == end:
             break
 
         # Look for neighbours for this current vertex - which will be east and south as we are a grid-graph
