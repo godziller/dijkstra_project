@@ -47,9 +47,9 @@ def benchmark_dijkstra(priority_queue_type):
             start_vertex = graph.get_vertex_by_label((0, 0))
             end_vertex = graph.get_vertex_by_label((size // 2, size // 2))
 
-            start_time = time.time()
+            start_time = time.perf_counter()
             results = dijkstra_source_to_dest(graph, start_vertex, end_vertex, priority_queue_type)
-            total_time += time.time() - start_time
+            total_time += time.perf_counter() - start_time
 
         avg_time = total_time / 10
 
