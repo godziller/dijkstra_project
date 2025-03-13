@@ -42,15 +42,16 @@ def graphreader(filename):
     return graph
 
 
-def print_shortest_path(start, end, parent_map):
-    """ Reconstruct and print the shortest path from start to end using the parent dictionary. """
+def print_shortest_path(start, end, predecessors):
+    """ Reconstruct and print the shortest path from start to end using the predecessors dictionary. """
     path = []
+    # Working from end back to start, setting a tmp variable current to the end vertex
     current = end
     while current is not None:
         path.append(current)
-        current = parent_map[current]
+        current = predecessors[current]
 
-    path.reverse()  # Reverse to get the correct order
+    path.reverse()  # Reverse to make it more intutitive for printing
     print(f"Path from {start} to {end}: {' -> '.join(str(v) for v in path)}")
 
 
@@ -59,15 +60,16 @@ if __name__ == "__main__":
     graph = graphreader("simplegraph2-2.txt")
 
     # Define Start and End Vertices
+    # Using assigment test - this should result in a 14->5 = length 16 and vertex 8 as predicesor.
+
     start_vertex = graph.get_vertex_by_label(14)
     end_vertex = graph.get_vertex_by_label(5)
 
     # Run Dijkstra’s Algorithm
-    #result = graph.dijkstra(start_vertex, end_vertex, PriorityQueue)
     results = dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQUnsortedList)
-    # Extract distances and parents from result
+    # Extract distances and predecessor from result
     distances = {v: results[v][0] for v in results}
-    parents = {v: results[v][1] for v in results}
+    predecessors = {v: results[v][1] for v in results}
 
     # Print Distances
     print("\nShortest distances from start vertex:")
@@ -78,4 +80,4 @@ if __name__ == "__main__":
     print("\nShortest paths:")
     for vertex in distances:
         if vertex != start_vertex:
-            print_shortest_path(start_vertex, vertex, parents)
+            print_shortest_path(start_vertex, vertex, predecessors)
