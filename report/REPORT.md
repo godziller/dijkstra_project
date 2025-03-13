@@ -1,5 +1,23 @@
 # Dijkstra Project
 
+# Project Setup and Running Experiments
+
+Each question from the assignment can be run with seperate py files.
+
+The py files are named according to the specfic task they address
+Note - ensure you have a python version > 3.xxx
+Note - if you want to run the pytest - ensure it is installed.
+
+The following is recommended:
+
+```bash
+
+python3 run_question1.py
+python3 run_question1.py
+# Pipe it to your file name of choice
+python3 run_question3.py > results.txt
+```
+
 ## Part 1
 
 Description of my implementation of Dijkstra's algo using adjacency list.
