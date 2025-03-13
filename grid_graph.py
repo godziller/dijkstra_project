@@ -2,6 +2,22 @@ import random
 from graph.graph_dijkstra import Graph
 
 def generate_weighted_grid_graph(n, m):
+    """
+    Generates a weighted grid graph of size n x m.
+
+    Parameters:
+    n (int): Number of rows in the grid.
+    m (int): Number of columns in the grid.
+
+    Returns:
+    Graph: An instance of a grid-graph representing the weighted grid.
+
+    Description:
+    The function constructs a grid graph. NOTE: vertexs have neighbours to
+    the south and east - 2 max. And only have a 1 predecessor point to it -
+    this predecessor is either located to the north or west
+    """
+    
     graph = Graph()
     max_weight = max(n, m) // 2
 
