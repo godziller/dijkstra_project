@@ -289,6 +289,11 @@ class Graph:
 
     def dijkstra(self, start, end):
         pass
+    """
+        Please see dijkstra.py for dijkstra implementation.
+        For better code legibility and focus, the algo is in a separate file and
+        takes a graph instance as a variable
+    """
     
 #---------------------------------------------------------------------------#
 

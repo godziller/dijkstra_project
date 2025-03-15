@@ -1,8 +1,6 @@
 import time
 from grid_graph import generate_weighted_grid_graph
 from dijkstra_algos.dijkstra import *
-from pq import APQUnsortedList
-
 
 """
 
@@ -17,7 +15,7 @@ Create 10 grid-graphs, each of size 500x500
 def benchmark_early_break_dijkstra(graph):
     pass
 
-def benchmark_all_nodes_dijkstra(target, graph_set, if_found_break):
+def benchmark_all_nodes_dijkstra(target, pq_class, graph_set, if_found_break):
 
     total_time = 0
     for graph in graph_set:
@@ -25,7 +23,7 @@ def benchmark_all_nodes_dijkstra(target, graph_set, if_found_break):
         end_vertex = graph.get_vertex_by_label(target)
         start_time = time.perf_counter()
         # don't need to catch results as I'm only interested in the timing
-        dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQUnsortedList, if_found_break)
+        dijkstra_source_to_dest(start_vertex, end_vertex, graph, pq_class, if_found_break)
         total_time += time.perf_counter() - start_time
 
     avg_time = total_time / len(graph_set)
@@ -39,7 +37,7 @@ if __name__ == "__main__":
     # Fixing the graph instances so we hae a consistent run
     graph_set = []
     # Going to create 10 grid-graphs and get the average dijkstra per target vertices
-    for i in range(10):
+    for i in range(1):
         graph_set.append(generate_weighted_grid_graph(500, 500))
 
     # Choosing to go diagonal away from source vertex
@@ -50,6 +48,6 @@ if __name__ == "__main__":
     for target in target_vertices:
 
         # if_found_break controls breaking if target found or not
-        early_break = benchmark_all_nodes_dijkstra(target, graph_set, if_found_break=True)
-        no_early_break = benchmark_all_nodes_dijkstra(target, graph_set, if_found_break=False)
+        early_break = benchmark_all_nodes_dijkstra(target,APQUnsortedList, graph_set, if_found_break=True)
+        no_early_break = benchmark_all_nodes_dijkstra(target, APQUnsortedList, graph_set, if_found_break=False)
         print(f'{target} | {no_early_break} | {early_break}')

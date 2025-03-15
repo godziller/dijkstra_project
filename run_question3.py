@@ -1,5 +1,5 @@
 import time
-from graph.graph_dijkstra import Graph
+from graph import Graph
 from pq import APQUnsortedList
 from dijkstra_algos.dijkstra import *
 from grid_graph import generate_weighted_grid_graph
@@ -48,7 +48,7 @@ def benchmark_dijkstra(priority_queue_type):
             end_vertex = graph.get_vertex_by_label((size // 2, size // 2))
 
             start_time = time.perf_counter()
-            results = dijkstra_source_to_dest(graph, start_vertex, end_vertex, priority_queue_type)
+            results = dijkstra_source_to_dest(start_vertex, end_vertex, graph, priority_queue_type)
             total_time += time.perf_counter() - start_time
 
         avg_time = total_time / 10

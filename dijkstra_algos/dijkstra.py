@@ -1,16 +1,18 @@
 from pq import APQUnsortedList
 
-def dijkstra_source_to_dest(graph, start, end,  apq_class, break_if_end_found=False):
+def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=False):
     """
     Computes the shortest path from a given source vertex to a specified destination vertex
     using Dijkstra's algorithm with an Adaptable Priority Queue.
 
     Args:
-        graph -- The Graph instance containing vertices and weighted edges.
+
         start -- The starting vertex for the shortest path calculation.
         end -- The destination vertex where the shortest path terminates.
-        apq_class -- taking advantage that both APQ implemenations share same APIs
-        break_if_end_found -- this allows the algo to exit early if the target is found
+        graph -- The Graph instance containing vertices and weighted edges.
+        apq_class -- supporting APQ and standard PQ - APQUnsortedList, APQBinaryHeap, PriorityQueue
+        break_if_end_found -- boolean controlling if the algo breaks out when finding target immediately or not.
+
 
     Returns:
         A closed dictionary containing
@@ -30,12 +32,27 @@ def dijkstra_source_to_dest(graph, start, end,  apq_class, break_if_end_found=Fa
 
     # This comes in handy as our 2 APQ implemenations use the same apis, so we can save a bit of code here.
     # the caller of this function will specify which to use.
-    pq = apq_class()
+    pq = pq_class()
+
+    # Ok, this is where I modify to cater for standard PriorityQueue class
+    # The big difference here is such does not support the update_key feature of APQs.
+    # Hence the flow of the below needs to cater for this.
+
+    # We begin by creating a flag to control the flow - PQ vs APQ
+
+    is_pq_adaptable = pq.__class__.__name__ != "PriorityQueue"
 
     # I needed this dict to track so I could use the APQ update_key later
     # without it, I would be limited to just adding - and duplicating entries :-(
+    # For PQ - this is not needed/used - we end up adding dups.
     pq_elements = {}
-    pq_elements[start] = pq.add(0, start)
+
+    # Here is the first difference between 2 types
+    if is_pq_adaptable:
+        pq_elements[start] = pq.add(0, start)
+    else:
+        # I don't need to track - 'cos I'm adding dups.
+        pq.add(0, start)
 
     # CLosed Dictionary where vertex is key, and value is a pair (length, preceding vertex)
     closed = {}
@@ -57,22 +74,30 @@ def dijkstra_source_to_dest(graph, start, end,  apq_class, break_if_end_found=Fa
 
         # Look for neighbours for this current vertex - which will be east and south as we are a grid-graph
         # i.e. this loops twice - except for boundary vertexs
-        for neighbor in graph._structure[current]:
+        for neighbour in graph._structure[current]:
 
             # Get the edge reference to get the distance
-            edge = graph._structure[current][neighbor]
+            edge = graph._structure[current][neighbour]
             new_distance = distances[current] + edge.element()
 
             # Have I seen before? If so is this shorter? These will be infinity set earlier for first time observation.
-            if new_distance < distances[neighbor]:
-                distances[neighbor] = new_distance
-                predecessors[neighbor] = current
+            if new_distance < distances[neighbour]:
+                distances[neighbour] = new_distance
+                predecessors[neighbour] = current
 
-                # This is where the APQ update_key kicks in - distance represents priority
-                # so if it is already in the apq, then update, otherwise just add.
-                if neighbor in pq_elements:
-                    pq.update_key(pq_elements[neighbor], new_distance)
+                # This block is where the difference between queue types is seen in action
+                # APQ take advantage of update_key
+                # PQ has no such feature
+                if is_pq_adaptable:
+                    # This is where the APQ update_key kicks in - distance represents priority
+                    # so if it is already in the apq, then update, otherwise just add.
+                    if neighbour in pq_elements:
+                        pq.update_key(pq_elements[neighbour], new_distance)
+                    else:
+                        pq_elements[neighbour] = pq.add(new_distance, neighbour)
                 else:
-                    pq_elements[neighbor] = pq.add(new_distance, neighbor)
+                    pq.add(new_distance, neighbour)
     # return the closed dictionary.
     return closed
+
+

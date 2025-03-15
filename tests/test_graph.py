@@ -1,5 +1,5 @@
 import unittest
-from graph.graph import Vertex, Edge, Graph
+from graph import Vertex, Edge, Graph
 
 
 class TestGraphADT(unittest.TestCase):
@@ -70,10 +70,19 @@ class TestGraphADT(unittest.TestCase):
 
     def test_remove_vertex(self):
         self.graph.remove_vertex(self.v3)
-        self.assertNotIn(self.v3, self.graph.vertices())
-        self.assertNotIn(self.v3, [v for e in self.graph.edges() for v in e.vertices()])
-        self.assertIsNone(self.graph.get_edge(self.v2, self.v3))
-        self.assertIsNone(self.graph.get_edge(self.v3, self.v4))
+
+        print("Vertices after removal:", self.graph.vertices())
+        print("Edges after removal:", self.graph.edges())
+
+        self.assertNotIn(self.v3, self.graph.vertices())  # Ensure vertex is gone
+        self.assertNotIn(self.v3,
+                         [v for e in self.graph.edges() for v in e.vertices()])  # Ensure it's not part of any edge
+
+        print("get_edge(v2, v3):", self.graph.get_edge(self.v2, self.v3))
+        print("get_edge(v3, v4):", self.graph.get_edge(self.v3, self.v4))
+
+        self.assertIsNone(self.graph.get_edge(self.v2, self.v3))  # Ensure edge is removed
+        self.assertIsNone(self.graph.get_edge(self.v3, self.v4))  # Ensure all edges to v3 are gone
 
     def test_remove_edge(self):
         self.graph.remove_edge(self.v2, self.v3)

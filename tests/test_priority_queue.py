@@ -1,5 +1,5 @@
 import unittest
-from pq.priority_queue import PQBinaryHeap
+from pq.priority_queue_binary_heap import PQBinaryHeap
 
 class TestPQBinaryHeap(unittest.TestCase):
 

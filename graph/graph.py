@@ -104,6 +104,8 @@ class Graph:
     def __init__(self):
         """ Create an initial empty graph. """
         self._structure = dict()
+        # adding a new dict to ultimately optimize get_vertex_by_label
+        self._vertex_map = {}
 
     def __str__(self):
         """ Return a string representation of the graph. """
@@ -140,13 +142,9 @@ class Graph:
     def get_vertex_by_label(self, element):
         """ get the first vertex that matches element. 
         
-        BEWARE! - this method is inefficient, and will be really slow
-        if used repeatedly on large graphs.
+        updated to use the hash map feature of a dictionary for fast lookup
         """
-        for v in self._structure:
-            if v.element() == element:
-                return v
-        return None
+        return self._vertex_map.get(element, None)
 
     def edges(self):
         """ Return a list of all edges in the graph. """
@@ -205,6 +203,7 @@ class Graph:
         """
         v = Vertex(element)
         self._structure[v] = dict()  # create an empty dict, ready for edges
+        self._vertex_map[element] = v  # Store for quicker access
         return v
 
     def add_vertex_if_new(self, element):
@@ -218,12 +217,11 @@ class Graph:
         To ensure vertices are unique for individual parts of element,
         separate methods need to be written.
 
-        BEWARE! -- this uses linear search and will be inefficient for large graphs.
+        Now updated to improve lookup by using an O(1) lookup
         """
         for v in self._structure:
-            if v.element() == element:
-                #print('Already in graph')
-                return v
+            if element in self._vertex_map:
+                return self._vertex_map[element]
         return self.add_vertex(element)
 
     def add_edge(self, v, w, element):
@@ -259,10 +257,13 @@ class Graph:
             self.add_edge(v,w,None)
 
     def remove_vertex(self, v):
+        """ Remove a vertex and all associated edges. """
         if v in self._structure:
             for neighbor in list(self._structure[v]):
                 self.remove_edge(v, neighbor)
-            del self._structure[v]
+            del self._structure[v]  # Remove vertex
+            if v.element() in self._vertex_map:
+                del self._vertex_map[v.element()] # need to get rid from new dict.
 
     def remove_edge(self, v, w):
         """ Remove the edge between v and w, if it exists. """

@@ -1,5 +1,5 @@
 import time
-from graph.graph_dijkstra import Graph
+from graph import Graph
 from pq import APQBinaryHeap
 from dijkstra_algos.dijkstra import *
 from grid_graph import generate_weighted_grid_graph
@@ -38,10 +38,13 @@ def benchmark_dijkstra_all_pqs():
     Output Format:
     Graph Size | PQ Used | Average Time (s)
     '''
+    # Print the header before the loop
+    print(f"{'Grid Size':<10} {'Binary Heap Time':<20} {'Unsorted List Time':<20}")
 
     for size in range(20, 501, 20):
         total_time_apq_binary_heap = 0
         total_time_apq_apq_unsorted_list = 0
+        grid_size = size * size
 
         for _ in range(10):
             graph = generate_weighted_grid_graph(size, size)
@@ -49,11 +52,11 @@ def benchmark_dijkstra_all_pqs():
             end_vertex = graph.get_vertex_by_label((size // 2, size // 2))
 
             start_time_apq_binary_heap = time.perf_counter()
-            results_apq_binary_heap = dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQBinaryHeap)
+            results_apq_binary_heap = dijkstra_source_to_dest(start_vertex, end_vertex, graph, APQBinaryHeap)
             total_time_apq_binary_heap += time.perf_counter() - start_time_apq_binary_heap
 
             start_time_apq_unsorted_list = time.perf_counter()
-            results_apq_unsorted_list = dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQUnsortedList)
+            results_apq_unsorted_list = dijkstra_source_to_dest(start_vertex, end_vertex, graph, APQUnsortedList)
             total_time_apq_apq_unsorted_list += time.perf_counter() - start_time_apq_unsorted_list
 
         avg_time_apq_unsorted_list = total_time_apq_apq_unsorted_list / 10
@@ -66,12 +69,8 @@ def benchmark_dijkstra_all_pqs():
         distances_unsorted_list = {v: results_apq_binary_heap[v][0] for v in results_apq_binary_heap}
         final_path_length_unsorted_list = distances_binary_heap.get(end_vertex, 'Not reachable')
 
-        print(f"{size}x{size}"
-              f" | APQBinaryHeap | {avg_time_apq_binary_heap:.6f} sec | "
-              f" Path Length from {start_vertex} to {end_vertex}: {final_path_length_binary_heap}"
-              f" | APQUnsortedList | {avg_time_apq_unsorted_list:.6f} sec | "
-              f" Path Length from {start_vertex} to {end_vertex}: {final_path_length_unsorted_list}")
-
+        # Inside your loop:
+        print(f"{grid_size:<10} {avg_time_apq_binary_heap:<20.6f} {avg_time_apq_unsorted_list:<20.6f}")
 
 if __name__ == "__main__":
     benchmark_dijkstra_all_pqs()

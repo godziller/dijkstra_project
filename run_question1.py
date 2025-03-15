@@ -1,5 +1,5 @@
 from pq import APQUnsortedList
-from graph.graph_dijkstra import Graph
+from graph import Graph
 from dijkstra_algos.dijkstra import *
 
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     end_vertex = graph.get_vertex_by_label(5)
 
     # Run Dijkstra’s Algorithm
-    results = dijkstra_source_to_dest(graph, start_vertex, end_vertex, APQUnsortedList)
+    results = dijkstra_source_to_dest(start_vertex, end_vertex, graph, APQUnsortedList)
     # Extract distances and predecessor from result
     distances = {v: results[v][0] for v in results}
     predecessors = {v: results[v][1] for v in results}

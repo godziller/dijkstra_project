@@ -1,5 +1,5 @@
 import random
-from graph.graph_dijkstra import Graph
+from graph import Graph
 from dijkstra_algos.dijkstra import *
 from pq import APQUnsortedList
 
@@ -50,11 +50,11 @@ def get_shortest_path(start, end, predecessors):
         path.append(current)
         current = predecessors[current]
 
-    path.reverse()  # Reverse to make it more intutitive for printing
+    path.reverse()  # Reverse to make it more intuitive for printing
     return f"Path from {start} to {end}: {' -> '.join(str(v) for v in path)}"
 
 if __name__ == "__main__":
-    n, m = 4, 5
+    n, m = 4, 4
     grid_graph = generate_weighted_grid_graph(n, m)
     print(grid_graph)
     print("===================")
@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     # Run Dijkstra’s Algorithm with my unsorted APQ
     # also passing in instance to my graph
-    results = dijkstra_source_to_dest(grid_graph, start_vertex, end_vertex, APQUnsortedList)
+    results = dijkstra_source_to_dest(start_vertex, end_vertex, grid_graph, APQUnsortedList)
 
     # Extract distances and predecessor from result
     distances = {v: results[v][0] for v in results}
