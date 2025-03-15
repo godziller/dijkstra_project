@@ -243,8 +243,21 @@ We see exponential growth as the grid size increases.
 | 480x480   | 3.880582        |
 | 500x500   | 4.338560        |
 
-The exponential growth as the grid size grows can be attributed to my O(N) implementation of `remove_min()`
+The following table is an analysis of this project's dijksta implementation:
+| Operation                      | Worst-Case Complexity |
+|--------------------------------|----------------------|
+| **Loop runs V times**          | O(V) |
+| **remove_min() in each iteration** | O(n) = O(V) |
+| **Processing neighbors (2 per vertex)** | O(1) each |
+| **update_key() (O(n)) or add() (O(1))** | O(n) per update |
 
+Note, we use O(n) above because, at any given moment the priority queue will hold a subset (n) of the total number of vertexes in the graph (V). But we can say n ~ V, we can say the implementation has a performance characteristic of O(n^2)
+
+This characteristic is reflected in the data presented in the table above.
+
+In code, the above can be reflected in these two following code snippets:
+
+`remove_min()` and the offending O(n) line is identified below.
 ```python
    def remove_min(self):
         """
@@ -255,7 +268,7 @@ The exponential growth as the grid size grows can be attributed to my O(N) imple
         if not self._data:
             return None
         min_index = 0
-        for i in range(1, len(self._data)):
+        for i in range(1, len(self._data)):     # The O(n) culprit
             if self._data[i]._key < self._data[min_index]._key:
                 min_index = i
         # Swap the minimum element with the last element
@@ -267,13 +280,11 @@ The exponential growth as the grid size grows can be attributed to my O(N) imple
         return value
 ```
 
-This is called in my dijkstra implementation as it traverses neighbor vertexes towards the target:
-
+The above is run within the following `while` loop - this being our O(V)
 ```python
     while pq.length() > 0:
         current = pq.remove_min()
 ```
-All other operations on this APQ used by dijksta are O(1) - so we can say the exponential time witnesses can be attributed to the `remove_min()` operation.
 
 ## Part 4 - Evaluate Dijkstra for fixed Graph size but all notes shortest paths
 
@@ -306,6 +317,7 @@ def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=Fals
         graph -- The Graph instance containing vertices and weighted edges.
         apq_class -- supporting APQ and standard PQ - APQUnsortedList, APQBinaryHeap, PriorityQueue
         break_if_end_found -- boolean controlling if the algo breaks out when finding target immediately or not.
+
 ```
 
 Its use in the code is quite trivial, as the variable `current` iterates though the vertexes while performing dijkstra, this simple check below determines if current is now in-fact the target vertex being sought.
@@ -336,19 +348,59 @@ d = 181 + 181 = 362
 
 So, we can say when the target of a grid graph increases beyond 362 edges from the source, the benefits of breaking early if the target is found is reduced significantly.
 
-### **Result:**
-The point **(431,431) represents 362 edges** in an unweighted grid-graph, assuming only horizontal and vertical moves are allowed.
-
 ![question4.png](question4.png)
-
-
-A hybrid of Part3 - now I need to fix the size to 500, us the center node (250,250) as source and find all paths to all other nodes
 
 ## Part 5 - Evaluate Binary Heap APQ
 
-Describe how to run the test.
+Part 5 is concerned with evaluating two types of APQ implementations - Binary Heap vs Unsorted List.
 
-Repeat Part 3 for Binary Heap and compare results with part 3
+This evaluation is a repeat of Part 3, but using Binary heap.
+
+To run this evaluation, execute `python3 run_evaluation5.py`. Again if you want to persist the results, pipe (`>`) to a filename of your choosing.
+
+Part 5 presents an opportunity to discuss our code some more. Earlier, we made reference to the pq_class in our dijkstra operation signature - `def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=False)`. The modest consideration made in abstracting the APQ type here now pays dividends. 
+
+Moving from running the dijkstra implementation from unsorted list to binary heap is as trivial as changing from:
+```python
+dijkstra_source_to_dest(start_vertex, end_vertex, graph, APQUnsortedList)
+```
+to
+```python
+dijkstra_source_to_dest(start_vertex, end_vertex, graph, APQBinaryHeap)
+```
+
+While the implementation does need to understand it is working with an APQ, it is completly oblivious to which one, as the code references the APQ as 'pq'
+
+```python
+    # This comes in handy as our 2 APQ implemenations use the same apis, so we can save a bit of code here.
+    # the caller of this function will specify which to use.
+    pq = pq_class()
+```
+
+Some adjustment is required for a vanilla Priority Queue - but we will address this in Part 6.
+
+### Running and Evaluating
+
+To run this evaluation, execute `python3 run_evaluation5.py`. Again if you want to persist the results, pipe (`>`) to a filename of your choosing.
+
+Below is a graph comparing the performance of dijkstra run with both an unsorted list and binary heap implementation of APQ.
+
+As can be seen, for smaller grid sizes circa 22500 (150x150) both perform relatively similar. However what is clear is as the grid size grows the binary heap implementation consistently and increasingly outperforms its unsorted list sibling.
+
+![Binary_Heap_Vs_Unsorted_List.png](Binary_Heap_Vs_Unsorted_List.png)
+
+The following table compares the two implemenation for the dijksta implemenation:
+
+| Implementation        | Loop Runs (V) | `remove_min()` per Iteration | Processing Neighbors | `update_key()` or `add()` | Total Complexity |
+|----------------------|--------------|-----------------------------|----------------------|-------------------------|------------------|
+| **Unsorted List APQ** | O(V) | O(V) | O(1) per neighbor (2 per vertex) | O(V) per update | **O(V²)** |
+| **Binary Heap APQ**   | O(V) | O(log V) | O(1) per neighbor (2 per vertex) | O(log V) per update | **O(V log V)** |
+
+
+- **Unsorted List APQ** results in **O(V²) complexity**, making it inefficient for large graphs.
+- **Binary Heap APQ** achieves **O(V log V) complexity**, which is significantly faster and optimal for Dijkstra’s algorithm.
+
+
 
 ## Part 6 Evaluate Simple Priority Queue
 
