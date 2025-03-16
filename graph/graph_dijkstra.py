@@ -260,8 +260,8 @@ class Graph:
 
     def remove_vertex(self, v):
         if v in self._structure:
-            for neighbor in list(self._structure[v]):
-                self.remove_edge(v, neighbor)
+            for neighbour in list(self._structure[v]):
+                self.remove_edge(v, neighbour)
             del self._structure[v]
 
     def remove_edge(self, v, w):

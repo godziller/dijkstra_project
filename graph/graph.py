@@ -259,8 +259,8 @@ class Graph:
     def remove_vertex(self, v):
         """ Remove a vertex and all associated edges. """
         if v in self._structure:
-            for neighbor in list(self._structure[v]):
-                self.remove_edge(v, neighbor)
+            for neighbour in list(self._structure[v]):
+                self.remove_edge(v, neighbour)
             del self._structure[v]  # Remove vertex
             if v.element() in self._vertex_map:
                 del self._vertex_map[v.element()] # need to get rid from new dict.

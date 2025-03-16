@@ -51,6 +51,7 @@ class PQBinaryHeap:
     #
     # First, the four standard methods for the ADT
 
+    # O(log n)
     def add(self, key, value):
         """ Add Element(key,value) to the heap. """
         e = PQBinaryHeap.Element(key, value)
@@ -65,6 +66,7 @@ class PQBinaryHeap:
             return self._heap[0]._key, self._heap[0]._value
         return None, None
 
+    # O(log n)
     def remove_min(self):
         """ Remove and return the min priority key,value. """
         returnvalue = None
@@ -77,7 +79,7 @@ class PQBinaryHeap:
                 self._heap[0] = self._heap[-1]
                 self._heap.pop()
                 self._size -= 1
-                self._downheap(0)
+                self._downheap(0) # This is the culprit to turn this into O(log n)
             else:
                 self._heap.pop()
                 self._size -= 1
@@ -115,6 +117,7 @@ class PQBinaryHeap:
         if posn > 0 and self._upswap(posn, self._parent(posn)):
             self._upheap(self._parent(posn))
 
+    # O(1)
     def _upswap(self, posn, parent):
         """ If heap elt at posn has lower key than parent, swap. """
         if self._heap[posn] < self._heap[parent]:
@@ -124,6 +127,7 @@ class PQBinaryHeap:
             return True
         return False
 
+    # O(log n)
     def _downheap(self, posn):
         """ Bubble the item in posn in the heap down to its correct place. """
         #find minchild position
@@ -138,6 +142,7 @@ class PQBinaryHeap:
             if self._downswap(posn, minchild):
                 self._downheap(minchild)
 
+    # O(1)
     def _downswap(self, posn, child):
         """ If healp elt at posn has lower key than child, swap; else return False. """
         #Note: this could be merged with _upswap to provide a general

@@ -39,7 +39,6 @@ def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=Fals
     # Hence the flow of the below needs to cater for this.
 
     # We begin by creating a flag to control the flow - PQ vs APQ
-
     is_pq_adaptable = pq.__class__.__name__ != "PriorityQueue"
 
     # I needed this dict to track so I could use the APQ update_key later
@@ -96,6 +95,7 @@ def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=Fals
                     else:
                         pq_elements[neighbour] = pq.add(new_distance, neighbour)
                 else:
+                    # For standard PQ we don't need a location dictionary - pq_elements[]
                     pq.add(new_distance, neighbour)
     # return the closed dictionary.
     return closed

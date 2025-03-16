@@ -62,7 +62,8 @@ class APQUnsortedList(object):
         if not self._data:
             return None
         min_index = 0
-        for i in range(1, len(self._data)):
+        # This loop is the O(N) inducing part of remove_min
+        for i in range(1, len(self._data)):     # The O(n) culprit
             if self._data[i]._key < self._data[min_index]._key:
                 min_index = i
         # Swap the minimum element with the last element

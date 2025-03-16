@@ -1,31 +1,71 @@
 # Dijkstra Project
 
-# Project Setup and Running Experiments
+## System Requirements
 
-Each question from the assignment can be run with separate py files.
+- This project requires python 3.6 or greater to run. Note for printing it uses the `f-string` feature, which was introduced in the mentioned version.
+- If you want to run the test harness, please ensure you have `pytest` installed.
+- A pretty beef machine is required, especially for `run_question4.py` and `run_question6.py`
 
-The py files are named according to the specific task they address
+## Setting up the project.
 
-Note - please ensure your python3 version is 3.6 or greater - this because the print functions
-use the f-strings feature - hopefully this should not be an issue as 3.6 was release in 2016.
+The easiest way to run this project is to `git clone https://github.com/godziller/dijkstra_project.git`
 
-Note - if you want to run the pytest - ensure it is installed on your system.
+If you choose to install manually, via zip download, please ensure the directory/file structure is as described below.
 
-The following is recommended:
-
-```bash
-
-python3 run_question1.py
-python3 run_question2.py
-# Pipe it to your file name of choice 
-python3 run_question3.py > q3_results.txt
-python3 run_question4.py > q4_results.txt
-python3 run_question5.py > q5_results.txt
-python3 run_question6.py > q6_results.txt
+## Project Structure
 
 ```
-For convenience to the reader, a persisted run of the above can be found in `report/` directory, their name indicating the run they are associated with. For example `evaluation_p4.txt` is the output of `run_question4.py` evaluation
+The file and directory structure is as follows:
+├── dijkstra_algos                  # My Dijksta Algorithm
+│   └── dijkstra.py
+├── graph                           # Graph Implemenation
+│   ├── graph_dijkstra.py
+│   ├── graph.py
+│   └── __init__.py
+├── pq                              # Various Priority queue implementations
+│   ├── apq_binary_heap.py
+│   ├── apq_unsorted_list.py
+│   ├── __init__.py
+│   ├── priority_queue_binary_heap.py
+│   └── priority_queue_unsorted.py
+├── report                          # Project report. Archived evaluation runs for convienence
+│   ├── Binary_Heap_Vs_Unsorted_List.png
+│   ├── evaluation_q1.txt
+│   ├── evaluation_q2.txt
+│   ├── evaluation_q3.txt
+│   ├── evaluation_q4.txt
+│   ├── evaluation_q5.txt
+│   ├── evaluation_q6.txt
+│   ├── question4.png
+│   ├── question6.png
+│   ├── REPORT.md                   # Project report
+│   └── REPORT.pdf                  # PDF of project report
+└── tests                           # Test Folder
+    ├── __init__.py
+    ├── test_apq_binary_heap.py
+    ├── test_apq_unsorted_list.py
+    ├── test_graph.py
+    └── test_priority_queue.py
+├── README.md                       # This readme
+├── run_question1.py                # All the evaluation runs
+├── run_question2.py
+├── run_question3.py
+├── run_question4.py
+├── run_question5.py
+└── run_question6.py
+```
 
+## Running the evaluations
+
+To make it easier, I tried to follow the same pattern for running each evaluation from Part 1 -> 6. 
+
+Simply execute `python3 run_question[VER].py` where VER is 1 to 6, matching assignment question 1 to 6.
+
+Each outputs to terminal. But you can redirect to a file, name of your choosing using the standard linux `>` mechanism.
+
+Inside `report/` you will find a set of file, `evaluation_q[VER].txt` where VER is as described immediately above.
+
+These evaluation files provided the bases for the report, documented in REPORT.md
 ## Part 1 - Implementation of Dijkstra
 
 Part 1 of this assignment was to implement Dijkstra's algorithm to find the shortest path from a source vertex
@@ -35,28 +75,23 @@ to another vertex in a *weighted* graph. There are three aspects worth highlight
 The graph implementation from Labs was reused, which is based upon an adjacency map implementation.
 
 ```python
-
     def __init__(self):
         """ Create an initial empty graph. """
         self._structure = dict()
         # adding a new dict to ultimately optimize get_vertex_by_label
         self._vertex_map = {}
-
 ```
 The other noteworthy aspect to point out is an improvement made to the reused `Graph` implementation is the performance 
 improvement made to address the inherited O(n) implementation, changing it to an O(1) improvement by using a `_vertex_map` 
 dictionary for fast lookup.
 
 ```python
-
-
     def get_vertex_by_label(self, element):
         """ get the first vertex that matches element. 
         
         updated to use the hash map feature of a dictionary for fast lookup
         """
         return self._vertex_map.get(element, None)
-
 ```
 
 ### The APQ
@@ -67,7 +102,6 @@ In later parts of the assignment a second implementation was required - an APQ u
 Below is the APQ ADT - from which we implement to.
 
 ```mermaid
-
 classDiagram
     class Element {
         - key: any
@@ -90,8 +124,6 @@ classDiagram
     }
 
     APQ "1" *-- "many" Element : contains
-
-
 ```
 ### Dijkstra's Algorithm
 
@@ -100,7 +132,6 @@ and returns a **closed** dictionary where the vertex is the key and its value is
 length from source and preceding vertex
 
 ```python
-
 def dijkstra_source_to_dest(start, end, graph, pq_class, break_if_end_found=False):
     """
     Computes the shortest path from a given source vertex to a specified destination vertex
@@ -163,7 +194,7 @@ Part 2 of the assignment is to build upon Part 1 and build a grid-graph generato
 
 Each node corresponds to an entry in an n x m grid, and there is an edge from each node [i][j] to [i+1][j] adn to [i][j+1]
 
-The grid-graph generator is reletavily trivial - a nested j loop inside an i loop - run on two seperate occassions, the first run to create a vertex for every n x m, the second to wire the edges as per the description above assigning a random number each time an edge is created.
+The grid-graph generator is relatively trivial - a nested j loop inside an i loop - run on two separate occasions, the first run to create a vertex for every n x m, the second to wire the edges as per the description above assigning a random number each time an edge is created.
 
 The code in `run_question2.py` is self-explanatory. 
 
@@ -215,33 +246,22 @@ python3 run_question3.py
 Summarizing the output from running the above for an Unsorted List APQ, we get the following table.
 We see exponential growth as the grid size increases.
 
-| Grid Size | Time Taken (sec) |
-|-----------|-----------------|
-| 20x20     | 0.000798        |
-| 40x40     | 0.003260        |
-| 60x60     | 0.009301        |
-| 80x80     | 0.020247        |
-| 100x100   | 0.036878        |
-| 120x120   | 0.063456        |
-| 140x140   | 0.105408        |
-| 160x160   | 0.160776        |
-| 180x180   | 0.208844        |
-| 200x200   | 0.283467        |
-| 220x220   | 0.381146        |
-| 240x240   | 0.490340        |
-| 260x260   | 0.623704        |
-| 280x280   | 0.789453        |
-| 300x300   | 0.963284        |
-| 320x320   | 1.138039        |
-| 340x340   | 1.380741        |
-| 360x360   | 1.635780        |
-| 380x380   | 1.966757        |
-| 400x400   | 2.255509        |
-| 420x420   | 2.578821        |
-| 440x440   | 2.942701        |
-| 460x460   | 3.375868        |
-| 480x480   | 3.880582        |
-| 500x500   | 4.338560        |
+| Grid Size | Time Taken (sec) |   | Grid Size | Time Taken (sec) |
+|-----------|-----------------|---|-----------|-----------------|
+| 20x20     | 0.000798        |   | 260x260   | 0.623704        |
+| 40x40     | 0.003260        |   | 280x280   | 0.789453        |
+| 60x60     | 0.009301        |   | 300x300   | 0.963284        |
+| 80x80     | 0.020247        |   | 320x320   | 1.138039        |
+| 100x100   | 0.036878        |   | 340x340   | 1.380741        |
+| 120x120   | 0.063456        |   | 360x360   | 1.635780        |
+| 140x140   | 0.105408        |   | 380x380   | 1.966757        |
+| 160x160   | 0.160776        |   | 400x400   | 2.255509        |
+| 180x180   | 0.208844        |   | 420x420   | 2.578821        |
+| 200x200   | 0.283467        |   | 440x440   | 2.942701        |
+| 220x220   | 0.381146        |   | 460x460   | 3.375868        |
+| 240x240   | 0.490340        |   | 480x480   | 3.880582        |
+|           |                 |   | 500x500   | 4.338560        |
+
 
 The following table is an analysis of this project's dijksta implementation:
 
@@ -289,9 +309,9 @@ The above is run within the following `while` loop - this being our O(V)
 
 ## Part 4 - Evaluate Dijkstra for fixed Graph size but all notes shortest paths
 
-Part 4 builds on Part 3, asking the open question - would Dijksta's performance improve if it checked whether a node being removed from the heap is the destination and if so break out of the loop returning the current tree.
+Part 4 builds on Part 3, asking the open question - would Dijkstra's performance improve if it checked whether a node being removed from the heap is the destination and if so break out of the loop returning the current tree.
 
-The raw data can be viewed in `evaluation_q4.txt`. Below is a graphical represenation of the performance run.
+The raw data can be viewed in `evaluation_q4.txt`. Below is a graphical representation of the performance run.
 
 ### Running and Evaluating
 
@@ -459,3 +479,17 @@ The first observation from the graph above it the patterns between the runs shar
 As the only difference between these are the ability to update the weight/priority of a Vertex, this is where we should focus our attention on. Why would the lack of an `update_key()` mechanism have such a dramatic impact?
 
 The reason is, the PQ will add duplicate keys for a vertex if a more favourable weight is discovered through dijksta. While the queue is priority ordered, which allows dijksta still to perform with **accuracy**, it does however mean the PQ will suffer more because the queue length will grow as duplicates are added. Thus for the `remove_min()`, which is O(n) for the APQ, will grow in cost as duplicates are added. Thus, be less performant. This is why, while the pattern is similar, there is a stepwise degradation in performance for the PQ in comparison to the APQ.
+
+
+## Citations, Tools and Reuse
+
+This section to clearly describe what was reused vs. created from scratch
+
+- I reused the Graph implementation (`graph.py`) from earlier Semester 2 graph labs 4.
+- The reused the PQBinaryHeap implementation from Semester 1 Lab 7. This provided the basis for my APQBinaryHeap implementation (`apq_binary_heap.py`).
+- L12-AdaptablePriorityQueue provided the inspiration for both my `PriorityQueue` and `APQUnsortedList` implementation.
+- Google was used to help me with creating the directory structure. My start was very messy and I was loosing my way, so I searched for best practices in directory structure.
+- The test harness in tests/ was generated from ChatGPT - this inspired by my research on directory layout. As tests are not part of the assignment, I chose this path. Initially I thought it was overkill, but I was thankful when I changed my graph implementation mid way and this helped me catch a bug early.
+- I used PyCharm as my development environment, and used the breakpoint/debug feature to help me especially with the dijkstra algorithm.
+- I used PyCharm's pdf generator to generate my pdf from this markdown file.
+- I used a mermaid plugin (https://mermaid.js.org/) to create my class diagram 
