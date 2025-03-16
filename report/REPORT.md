@@ -272,7 +272,8 @@ The following table is an analysis of this project's dijksta implementation:
 | **Processing neighbors (2 per vertex)** | O(1) each |
 | **update_key() (O(n)) or add() (O(1))** | O(n) per update |
 
-Note, we use O(n) above because, at any given moment the priority queue will hold a subset (n) of the total number of vertexes in the graph (V). But we can say n ~ V, we can say the implementation has a performance characteristic of O(n^2)
+Note, we use O(n) above because, at any given moment the priority queue will hold a subset (n) of the total number of vertexes in the graph (V). But we can say n ~ V, we can say the implementation has a performance characteristic of O($n^2$)
+This observation was identified when focused on Part 6 later, reflecting on the behaviour of growing queue size with redundant vertexes for the PQ implementation/limitation.
 
 This characteristic is reflected in the data presented in the table above.
 
@@ -414,11 +415,11 @@ The following table compares the two implemenation for the dijksta implemenation
 
 | Implementation        | Loop Runs (V) | `remove_min()` per Iteration | Processing Neighbors       | `update_key()` or `add()` | Total Complexity |
 |----------------------|--------------|-----------------------------|----------------------------|---------------------------|------------------|
-| **Unsorted List APQ** | O(V)        | O(V)                        | O(1) per neighbor (2 per vertex) | O(V) per update           | **O(V²)**        |
+| **Unsorted List APQ** | O(V)        | O(V)                        | O(1) per neighbor (2 per vertex) | O(V) per update           | **O($V^2$)**     |
 | **Binary Heap APQ**   | O(V)        | O(log V)                    | O(1) per neighbor (2 per vertex) | O(log V) per update       | **O(V log V)**   |
 
 
-- **Unsorted List APQ** results in **O(V²) complexity**, making it inefficient for large graphs.
+- **Unsorted List APQ** results in **O($V^2$) complexity**, making it inefficient for large graphs.
 - **Binary Heap APQ** achieves **O(V log V) complexity**, which is significantly faster and optimal for Dijkstra’s algorithm.
 
 
@@ -493,3 +494,4 @@ This section to clearly describe what was reused vs. created from scratch
 - I used PyCharm as my development environment, and used the breakpoint/debug feature to help me especially with the dijkstra algorithm.
 - I used PyCharm's pdf generator to generate my pdf from this markdown file.
 - I used a mermaid plugin (https://mermaid.js.org/) to create my class diagram 
+- Used google to assist with markdown advanced feature, like tables, embedding images and mathematical notation like squaring - $V^2$
