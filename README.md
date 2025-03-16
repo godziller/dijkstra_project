@@ -55,7 +55,7 @@ The file and directory structure is as follows:
 └── run_question6.py
 ```
 
-## Running the evaluations
+## Running the Evaluations
 
 To make it easier, I tried to follow the same pattern for running each evaluation from Part 1 -> 6. 
 
@@ -65,5 +65,7 @@ Each outputs to terminal. But you can redirect to a file, name of your choosing 
 
 Inside `report/` you will find a set of file, `evaluation_q[VER].txt` where VER is as described immediately above.
 
-These evaluation files provided the bases for the report, documented in REPORT.md
+## The Evaluation
+
+The Project evaluation can be found in `report/` in both markdown format `REPORT.md` and pdf `REPORT.pdf` 
 
