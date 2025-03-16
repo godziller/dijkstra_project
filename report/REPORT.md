@@ -139,7 +139,7 @@ dijkstra implementation we can abstract its usage.
 
 We discuss the `break_if_end_found` in Part 4 of this report where its usage is more pertinent.
 
-### Testing Dijkstra Implementation
+### Running and Evaluating Dijkstra Implementation
 
 For details on how the algorithm works, please see the `dijkstra.py` python file, where the code is marked up
 with verbose comments.
@@ -167,7 +167,7 @@ The grid-graph generator is reletavily trivial - a nested j loop inside an i loo
 
 The code in `run_question2.py` is self-explanatory. 
 
-### Running and Testing Part 2
+### Running and Evaluating
 
 To run the second task, simple run `python3 run_question2.py`. If you wish to persist the results, simply pipe (`>`) to a file name of your choosing.
 The output is quite verbose - printing all vertex instances, all edges with weights. Then shortest paths from source to every destination is presented. The expectation for Part 2 is the grid size is small, so we can expose the mentioned data without too much burden on the reader.
@@ -205,7 +205,7 @@ For every singular graph-size run, we create 10 instances of that size to get an
 
 While we are only interested in the performance of dijkstra, we print out the path length as well - in increments of 20, the output should not be too large to be cumbersome to read.
 
-### Running and Analysis
+### Running and Evaluating
 
 This experiment can be run by invoking:
 
@@ -244,9 +244,10 @@ We see exponential growth as the grid size increases.
 | 500x500   | 4.338560        |
 
 The following table is an analysis of this project's dijksta implementation:
+
 | Operation                      | Worst-Case Complexity |
 |--------------------------------|----------------------|
-| **Loop runs V times**          | O(V) |
+| **Loop runs V times**          | O(V)                 |
 | **remove_min() in each iteration** | O(n) = O(V) |
 | **Processing neighbors (2 per vertex)** | O(1) each |
 | **update_key() (O(n)) or add() (O(1))** | O(n) per update |
@@ -292,7 +293,7 @@ Part 4 builds on Part 3, asking the open question - would Dijksta's performance 
 
 The raw data can be viewed in `evaluation_q4.txt`. Below is a graphical represenation of the performance run.
 
-### Building and Analysis
+### Running and Evaluating
 
 Building follows the same pattern as before, invoking - `python3 run_question4.py`
 
@@ -391,10 +392,10 @@ As can be seen, for smaller grid sizes circa 22500 (150x150) both perform relati
 
 The following table compares the two implemenation for the dijksta implemenation:
 
-| Implementation        | Loop Runs (V) | `remove_min()` per Iteration | Processing Neighbors | `update_key()` or `add()` | Total Complexity |
-|----------------------|--------------|-----------------------------|----------------------|-------------------------|------------------|
-| **Unsorted List APQ** | O(V) | O(V) | O(1) per neighbor (2 per vertex) | O(V) per update | **O(V²)** |
-| **Binary Heap APQ**   | O(V) | O(log V) | O(1) per neighbor (2 per vertex) | O(log V) per update | **O(V log V)** |
+| Implementation        | Loop Runs (V) | `remove_min()` per Iteration | Processing Neighbors       | `update_key()` or `add()` | Total Complexity |
+|----------------------|--------------|-----------------------------|----------------------------|---------------------------|------------------|
+| **Unsorted List APQ** | O(V)        | O(V)                        | O(1) per neighbor (2 per vertex) | O(V) per update           | **O(V²)**        |
+| **Binary Heap APQ**   | O(V)        | O(log V)                    | O(1) per neighbor (2 per vertex) | O(log V) per update       | **O(V log V)**   |
 
 
 - **Unsorted List APQ** results in **O(V²) complexity**, making it inefficient for large graphs.
@@ -404,7 +405,57 @@ The following table compares the two implemenation for the dijksta implemenation
 
 ## Part 6 Evaluate Simple Priority Queue
 
-Describe how to run the test.
+The final Part 6 is to compare the standard PQ with the earlier APQ - we choose both unsorted for this run.
 
-Repeat part 4 with this PQ implementation and present results.
+Before we comment on the performance, it is best to explain how we accommodate this third queue variation in code.
 
+We use the familiar operation call `early_break_vanilla_pq = benchmark_all_nodes_dijkstra(target, PriorityQueue, graph_set, if_found_break=True)`, this time passing our Priority Queue Class. While this PQ is very similar to the APQs that have been used earlier, it does have some modest differences - namely it does not support the ability to update an element's priority - `update_key()`.
+
+Thus, inside the dijkstra implementation, we have two jobs - the first is to recognize if an inbound queue is adaptable or not (i.e. an APQ or PQ). There after treat it accordingly.
+
+Recognizing if the requestor is directing us to use a PQ or not is trivial, and acomplished via this code snippet:
+
+```python
+    # We begin by creating a flag to control the flow - PQ vs APQ
+    is_pq_adaptable = pq.__class__.__name__ != "PriorityQueue"
+```
+with this flag, the following is where the difference between these two variants is handled:
+
+```python
+                # This block is where the difference between queue types is seen in action
+                # APQ take advantage of update_key
+                # PQ has no such feature
+                if is_pq_adaptable:
+                    # This is where the APQ update_key kicks in - distance represents priority
+                    # so if it is already in the apq, then update, otherwise just add.
+                    if neighbour in pq_elements:
+                        pq.update_key(pq_elements[neighbour], new_distance)
+                    else:
+                        pq_elements[neighbour] = pq.add(new_distance, neighbour)
+                else:
+                   # For standard PQ we don't need a location dictionary - pq_elements[]
+                    pq.add(new_distance, neighbour)
+```
+
+Two aspects of the above are notable.
+- the flag is used to put `update_key()` into play or not - for standard PQ it isn't available.
+- both types have an `add()`, however the location dictionary - `pq_elements[]` is redundant, so we keep it unused and empty - to avoid consuming memory.
+
+### Running and Evaluating
+
+To run Part 6 evaluation, simply invoke `python3 run_question6.py`
+
+The graph below presents the performance evaluation of 4 seperate dijkstra runs, each using the same graph instance for each iteration. The four runs are:
+
+- Our APQ unsorted list with `break_if_end_found` disabled
+- Our APQ unsorted list with `break_if_end_found` enabled
+- Our PQ unsorted list with `break_if_end_found` disabled
+- Our PQ unsorted list with `break_if_end_found` enabled
+
+![question6.png](question6.png)
+
+The first observation from the graph above it the patterns between the runs share a similar pattern. However, what we can also see is there is a significant difference in performance - the APQ far outperforms its PQ sibling.
+
+As the only difference between these are the ability to update the weight/priority of a Vertex, this is where we should focus our attention on. Why would the lack of an `update_key()` mechanism have such a dramatic impact?
+
+The reason is, the PQ will add duplicate keys for a vertex if a more favourable weight is discovered through dijksta. While the queue is priority ordered, which allows dijksta still to perform with **accuracy**, it does however mean the PQ will suffer more because the queue length will grow as duplicates are added. Thus for the `remove_min()`, which is O(n) for the APQ, will grow in cost as duplicates are added. Thus, be less performant. This is why, while the pattern is similar, there is a stepwise degradation in performance for the PQ in comparison to the APQ.
