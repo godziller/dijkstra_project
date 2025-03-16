@@ -65,7 +65,7 @@ Each outputs to terminal. But you can redirect to a file, name of your choosing 
 
 Inside `report/` you will find a set of file, `evaluation_q[VER].txt` where VER is as described immediately above.
 
-These evaluation files provided the bases for the report, documented in REPORT.md
+These evaluation files provided the bases for the report, documented in REPORT.md and this pdf.
 ## Part 1 - Implementation of Dijkstra
 
 Part 1 of this assignment was to implement Dijkstra's algorithm to find the shortest path from a source vertex
@@ -433,7 +433,7 @@ We use the familiar operation call `early_break_vanilla_pq = benchmark_all_nodes
 
 Thus, inside the dijkstra implementation, we have two jobs - the first is to recognize if an inbound queue is adaptable or not (i.e. an APQ or PQ). There after treat it accordingly.
 
-Recognizing if the requestor is directing us to use a PQ or not is trivial, and acomplished via this code snippet:
+Recognizing if the requestor is directing us to use a PQ or not is trivial, and accomplished via this code snippet:
 
 ```python
     # We begin by creating a flag to control the flow - PQ vs APQ
