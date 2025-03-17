@@ -266,16 +266,18 @@ We see exponential growth as the grid size increases.
 The following table is an analysis of this project's dijksta implementation:
 
 | Operation                      | Worst-Case Complexity |
-|--------------------------------|----------------------|
-| **Loop runs V times**          | O(V)                 |
-| **remove_min() in each iteration** | O(n) = O(V) |
-| **Processing neighbors (2 per vertex)** | O(1) each |
-| **update_key() (O(n)) or add() (O(1))** | O(n) per update |
+|--------------------------------|-----------------------|
+| **Loop runs n times**          | O(n)                  |
+| **remove_min() in each iteration** | O(n)                |
+| **Processing neighbors (2 per vertex)** | O(1) each         |
+| **update_key() (O(n)) or add() (O(1))** | O(n) per update   |
 
-Note, we use O(n) above because, at any given moment the priority queue will hold a subset (n) of the total number of vertexes in the graph (V). But we can say n ~ V, we can say the implementation has a performance characteristic of O($n^2$)
-This observation was identified when focused on Part 6 later, reflecting on the behaviour of growing queue size with redundant vertexes for the PQ implementation/limitation.
 
-This characteristic is reflected in the data presented in the table above.
+- **Loop runs n times**: The loop iterates once for each vertex (n vertices), so the loop complexity is O(n).
+- **remove_min()**: In each iteration, you remove the minimum element from the priority queue, which involves scanning through the queue. If the queue holds n elements, the complexity of this operation is O(n).
+- **Processing neighbors (2 per vertex)**: Processing the neighbors (in grid-graph case, 2 neighbors per vertex) remains O(1) per neighbor because this step is independent of the number of vertices.
+- **update_key() or add()**: When updating a vertex's priority/distance in the priority queue, you might need to perform a linear search (O(n)) in the worst case. If you are simply adding a new vertex, this is an O(1) operation, but the worst-case update still involves O(n) complexity.
+- 
 
 In code, the above can be reflected in these two following code snippets:
 
@@ -302,7 +304,9 @@ In code, the above can be reflected in these two following code snippets:
         return value
 ```
 
-The above is run within the following `while` loop - this being our O(V)
+Thus, for the above we can say Dijksta is performing with O($n^2$). This analysis is reflected in the data collected above.
+
+The above is run within the following `while` loop - this being our second O(n)
 ```python
     while pq.length() > 0:
         current = pq.remove_min()
@@ -413,16 +417,19 @@ As can be seen, for smaller grid sizes circa 22500 (150x150) both perform relati
 
 The following table compares the two implemenation for the dijksta implemenation:
 
-| Implementation        | Loop Runs (V) | `remove_min()` per Iteration | Processing Neighbors       | `update_key()` or `add()` | Total Complexity |
-|----------------------|--------------|-----------------------------|----------------------------|---------------------------|------------------|
-| **Unsorted List APQ** | O(V)        | O(V)                        | O(1) per neighbor (2 per vertex) | O(V) per update           | **O($V^2$)**     |
-| **Binary Heap APQ**   | O(V)        | O(log V)                    | O(1) per neighbor (2 per vertex) | O(log V) per update       | **O(V log V)**   |
+The following table compares the two implementations for the Dijkstra implementation:
+
+| Implementation        | Loop Runs (n) | `remove_min()` per Iteration | Processing Neighbors       | `update_key()` or `add()` | Total Complexity |
+|----------------------|---------------|-----------------------------|----------------------------|---------------------------|------------------|
+| **Unsorted List APQ** | O(n)          | O(n)                        | O(1) per neighbor (2 per vertex) | O(n) per update           | **O($n^2$)**     |
+| **Binary Heap APQ**   | O(n)          | O(log n)                    | O(1) per neighbor (2 per vertex) | O(log n) per update       | **O(n log n)**   |
+
+- **Unsorted List APQ** results in **O($n^2$) complexity**, making it inefficient for large graphs.
+- **Binary Heap APQ** achieves **O(n log n) complexity**, which is significantly faster and optimal for Dijkstra’s algorithm.
 
 
-- **Unsorted List APQ** results in **O($V^2$) complexity**, making it inefficient for large graphs.
-- **Binary Heap APQ** achieves **O(V log V) complexity**, which is significantly faster and optimal for Dijkstra’s algorithm.
-
-
+- **Unsorted List APQ** results in **O($n^2$) complexity**, making it inefficient for large graphs.
+- **Binary Heap APQ** achieves **O(n log n) complexity**, which is significantly faster and optimal for Dijkstra’s algorithm.
 
 ## Part 6 Evaluate Simple Priority Queue
 
@@ -489,6 +496,7 @@ This section to clearly describe what was reused vs. created from scratch
 - I reused the Graph implementation (`graph.py`) from earlier Semester 2 graph labs 4.
 - The reused the PQBinaryHeap implementation from Semester 1 Lab 7. This provided the basis for my APQBinaryHeap implementation (`apq_binary_heap.py`).
 - L12-AdaptablePriorityQueue provided the inspiration for both my `PriorityQueue` and `APQUnsortedList` implementation.
+- While I implemented dijkstra, inspiration was taken from Semester 2 Lab 5 `graph-traversal.py`, especially in understand how to construct the return structure.
 - Google was used to help me with creating the directory structure. My start was very messy and I was loosing my way, so I searched for best practices in directory structure.
 - The test harness in tests/ was generated from ChatGPT - this inspired by my research on directory layout. As tests are not part of the assignment, I chose this path. Initially I thought it was overkill, but I was thankful when I changed my graph implementation mid way and this helped me catch a bug early.
 - I used PyCharm as my development environment, and used the breakpoint/debug feature to help me especially with the dijkstra algorithm.
