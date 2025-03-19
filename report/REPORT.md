@@ -502,4 +502,4 @@ This section to clearly describe what was reused vs. created from scratch
 - I used PyCharm as my development environment, and used the breakpoint/debug feature to help me especially with the dijkstra algorithm.
 - I used PyCharm's pdf generator to generate my pdf from this markdown file.
 - I used a mermaid plugin (https://mermaid.js.org/) to create my class diagram 
-- Used google to assist with markdown advanced feature, like tables, embedding images and mathematical notation like squaring - $V^2$
+- Used google to assist with markdown advanced feature, like tables, embedding images and mathematical notation like squaring - $N^2$
