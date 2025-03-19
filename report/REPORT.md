@@ -198,6 +198,46 @@ The grid-graph generator is relatively trivial - a nested j loop inside an i loo
 
 The code in `run_question2.py` is self-explanatory. 
 
+```python
+def generate_weighted_grid_graph(n, m):
+    """
+    Generates a weighted grid graph of size n x m.
+
+    Parameters:
+    n (int): Number of rows in the grid.
+    m (int): Number of columns in the grid.
+
+    Returns:
+    Graph: An instance of a grid-graph representing the weighted grid.
+
+    Description:
+    The function constructs a grid graph. NOTE: vertexs have neighbours to
+    the south and east - 2 max. And only have a 1 predecessor point to it -
+    this predecessor is either located to the north or west
+    """
+    
+    graph = Graph()
+    max_weight = max(n, m) // 2
+
+    vertices = {}
+    for i in range(n):
+        for j in range(m):
+            # Going to use the (i,j) as a tuple to identify each vertex
+            vertices[(i, j)] = graph.add_vertex((i, j))
+
+    for i in range(n):
+        for j in range(m):
+            if i + 1 < n:
+                weight = random.randint(1, max_weight)
+                graph.add_edge(vertices[(i, j)], vertices[(i + 1, j)], weight)
+            if j + 1 < m:
+                weight = random.randint(1, max_weight)
+                graph.add_edge(vertices[(i, j)], vertices[(i, j + 1)], weight)
+
+    return graph
+
+```
+
 ### Running and Evaluating
 
 To run the second task, simple run `python3 run_question2.py`. If you wish to persist the results, simply pipe (`>`) to a file name of your choosing.
@@ -304,13 +344,13 @@ In code, the above can be reflected in these two following code snippets:
         return value
 ```
 
-Thus, for the above we can say Dijksta is performing with O($n^2$). This analysis is reflected in the data collected above.
-
 The above is run within the following `while` loop - this being our second O(n)
 ```python
     while pq.length() > 0:
         current = pq.remove_min()
 ```
+
+Thus, for the above we can say Dijksta is performing with O($n^2$). This analysis is reflected in the data collected above.
 
 ## Part 4 - Evaluate Dijkstra for fixed Graph size but all notes shortest paths
 
